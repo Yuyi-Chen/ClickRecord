@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">ClickRecord</string>
+    <string name="tip">录制操作需打开通知权限和无障碍模式，否则不能正常工作，请前往设置中打开！\n \n录制过程中请在设备响应您的操作后进行下一步操作，如果操作频率过快，可能会导致部分操作没有成功记录！\n \n记录结果保存在 /sdcard/Android/media/com.click.clickrecord/RecordFile 文件夹下，请前往文件管理查看！</string>
+</resources>
