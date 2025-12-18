@@ -4,7 +4,13 @@ import android.accessibilityservice.AccessibilityService
 import android.accessibilityservice.GestureDescription
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.graphics.*
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.Path
+import android.graphics.PixelFormat
+import android.graphics.Rect
 import android.os.Build
 import android.util.DisplayMetrics
 import android.util.Log
@@ -12,16 +18,18 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
 import android.view.accessibility.AccessibilityEvent
+import androidx.core.net.toUri
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LifecycleRegistry
+import com.click.clickrecord.util.FileUtils
 import com.click.clickrecord.util.ScreenUtil
 import com.click.clickrecord.util.Utils
 import com.click.clickrecord.viewmodel.ViewModelMain
 import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Locale
 import kotlin.math.abs
 
 class ClickRecordService : AccessibilityService(), LifecycleOwner {
@@ -216,6 +224,17 @@ class ClickRecordService : AccessibilityService(), LifecycleOwner {
         if (bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fileOutputStream)) {
             fileOutputStream.flush()
             fileOutputStream.close()
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            FileUtils.copyMediaFileInQ(this, file)
+        } else {
+            sendBroadcast(
+                Intent(
+                    Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
+                FileUtils.getFullFileUri(file.absolutePath).toUri()
+                )
+            )
         }
         result.clear()
         Utils.showToast(this, "录制结果保存成功")
